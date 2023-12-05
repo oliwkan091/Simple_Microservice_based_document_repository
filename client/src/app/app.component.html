@@ -1,0 +1,40 @@
+<div class="navbar navbar-expand navbar-dark bg-dark">
+  <div class="imageContainer  pe-3 ">
+    <img
+      alt="Database Logo"
+      src="/assets/images/database.png"
+      width="40"
+    />
+  </div>
+  <div class="titleContainer text-white">
+    File Repository
+  </div>
+  <div class="navbar-nav ms-auto">
+    <div *ngIf="isLogIn() && isAdmin()" class="nav-item">
+      <a [routerLink]="['/admin']" class="nav-link" routerLinkActive="active">Admin</a>
+    </div>
+    <div *ngIf="isLogIn()" class="nav-item">
+      <a [routerLink]="['/profile']" class="nav-link" routerLinkActive="active">{{currentUser.name}}</a>
+    </div>
+    <div *ngIf="isLogIn()" class="nav-item">
+      <a [routerLink]="['/home']" class="nav-link" routerLinkActive="active">Home</a>
+    </div>
+    <div *ngIf="isLogIn()" class="nav-item">
+      <a (click)="logOut()" class="nav-link" style="cursor: pointer">Sign Out</a>
+    </div>
+  </div>
+
+  <div *ngIf="!isLogIn()"  class="navbar-nav ms-auto">
+    <div class="nav-item">
+      <a [routerLink]="['/register']" class="nav-link" routerLinkActive="active">Sign Up</a>
+    </div>
+    <div class="nav-item">
+      <a [routerLink]="['/login']" class="nav-link" routerLinkActive="active">Sign In</a>
+    </div>
+  </div>
+
+
+</div>
+
+<router-outlet></router-outlet>
+

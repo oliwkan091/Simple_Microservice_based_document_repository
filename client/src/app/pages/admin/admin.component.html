@@ -1,0 +1,81 @@
+<div class="container p-3">
+
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{errorMessage}}
+    </div>
+    <div class="card">
+
+  <div class="card">
+    <div class="card-header pb-5">
+
+      <div class="row">
+        <div class="col-12 pd-5 pb-3">
+          <h1 class="pd-5 pt-2 text-center">Admin</h1>
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-12 pd-5">
+          <select (change)="onSelectChange($event)" class="form-control" name="Select User">
+            <option>Select</option>
+            <option *ngFor="let user of userList">
+              {{user.name}}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+
+    <div *ngIf="!isRepositoryEmpty()" class="card-body">
+      <div class="table table-stripped text-center">
+        <thead>
+          <tr>
+            <th class="col-1" scope="col"></th>
+            <th class="col-1" scope="col">#</th>
+            <th class="col-3" scope="col">Title</th>
+            <th class="col-2" scope="col">Upload Date</th>
+            <th class="col-1" scope="col">File Size</th>
+            <th class="col-2" scope="col">File Type</th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor = "let item of userFilesList; index as ind">
+          <th scope="row">
+            <div class="imageContainer  pe-3 ">
+              <img
+                alt="Database Logo"
+                src="{{fileCover(item.fileType)}}"
+                width="40"
+              />
+            </div>
+          </th>
+          <th scope="row">{{ind + 1}}</th>
+          <th scope="row">{{item.fileShowName}}</th>
+          <th scope="row">{{item.sendDate | date: "medium"}}</th>
+          <th scope="row">{{BytesToKbOrMb(item.fileSize!)}}</th>
+          <th scope="row">{{checkIfFileTypeIsKnown(item)}}</th>
+        </tr>
+        </tbody>
+      </div>
+  </div>
+    <div *ngIf="isRepositoryEmpty()" class="card-body">
+      <div class="col-md-12 mt-5 text-center">
+          <span class="display-5">
+              Repository Is Empty
+          </span>
+      </div>
+    </div>
+
+    <div *ngIf="!isUserSelected()" class="card-body">
+      <div class="col-md-12 mt-5 text-center">
+          <span class="display-5">
+              Select the user to see his files
+          </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+

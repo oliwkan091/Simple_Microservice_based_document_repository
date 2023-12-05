@@ -1,0 +1,37 @@
+<div class="modal fade" id="changeNameModal" tabIndex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form  #f="ngForm" (ngSubmit)="f.form.valid && isNameChanged() && saveUsername(f)">
+        <div class="modal-header">
+          <h5 class="modal-title">Change Name</h5>
+          <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
+        </div>
+        <div class="modal-body text-center">Insert new username</div>
+        <div *ngIf="errorMessage" class="alert alert-danger">
+          <strong> Error occurred</strong> {{errorMessage}}
+        </div>
+
+        <div class="form-group">
+          <label class="ps-3" for="username">Username</label>
+          <input
+            #username="ngModel"
+            [(ngModel)]="userToEdit.name"
+            class="form-control"
+            id="username"
+            name="username"
+            required
+            type="text"
+          />
+          <div *ngIf="f.submitted && (isNameEmpty() || !isNameChanged())" class="alert-danger text-danger ps-3">
+            {{nameInformMessage}}
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+          <button class="btn btn-primary" type="submit">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

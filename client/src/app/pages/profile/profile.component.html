@@ -1,0 +1,30 @@
+<div class="container p-3">
+  <div class="card">
+
+    <h1 class="pd-5 pt-2">Profile</h1>
+
+    <div class="card-element card mt-5">
+      <div>
+        <label class="h3 pb-2 pt-2">Username</label>
+      </div>
+      <div>
+        <label class="h5 pb-2">{{this.user.name}}</label>
+      </div>
+      <div>
+        <button (click)="editUsername()" class="btn btn-primary m-md-2" >Change</button>
+      </div>
+    </div>
+
+    <div class="card-element card mt-5 m-md-5">
+      <div>
+        <label class="h3 pb-2 pt-2">Password</label>
+      </div>
+      <div>
+        <button (click)="editPassword()" class="btn btn-primary m-md-2">Change</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+<app-change-name (saveChangeName)="saveEditedName($event)"></app-change-name>
+<app-change-password></app-change-password>

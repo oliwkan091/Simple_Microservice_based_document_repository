@@ -1,0 +1,11 @@
+.login-card{
+  width: 700px;
+  max-width: 200%;
+  min-width: 350px;
+  background-color: powderblue;
+}
+
+.login-icon{
+  font-size: 100px;
+  color:darkblue;
+}

@@ -1,0 +1,84 @@
+<div class="container mt-5">
+  <div class="card ms-auto me-auto p-3 shadow-lg login-card">
+    <form #f = "ngForm" (ngSubmit)="f.form.valid && register()">
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{errorMessage}}
+      </div>
+
+      <div class="text-center">
+        <img
+          alt="Database Logo"
+          class="ms-auto me-auto login-icon pb-lg-5 pt-lg-5"
+          src="/assets/images/user.png"
+          width="150"
+        />
+      </div>
+
+      <div class="form-group">
+        <div class="label">
+          Username
+        </div>
+        <input
+          #name = "ngModel"
+          [(ngModel)]="user.name"
+          class="form-control"
+          id = "name"
+          name = "name"
+          required
+          type="text"
+        >
+        <div *ngIf="!name.valid && f.submitted" class="alert-danger">
+          Name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          Password
+        </label>
+        <input
+          #password="ngModel"
+          [(ngModel)]="user.password"
+          class="form-control"
+          id="password"
+          name="password"
+          required
+          type="password"
+        >
+        <div *ngIf="!password.valid && f.submitted" class="alert-danger">
+          Password is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>
+          Repeat Password
+        </label>
+        <input
+          #password2="ngModel"
+          [(ngModel)]="passwordAgain"
+          class="form-control"
+          id="password2"
+          name="password2"
+          required
+          type="password"
+        >
+        <div *ngIf="!password2.valid && !isPasswordIdentical() && f.submitted" class="alert-danger">
+          Password is required
+        </div>
+      </div>
+
+      <button
+        class="btn  btn-primary w-100 mt-3"
+        type="submit"
+      >
+        Register
+      </button>
+    </form>
+
+    <a [routerLink]="['/login']" class="btn btn-link">
+      Log in
+    </a>
+  </div>
+</div>

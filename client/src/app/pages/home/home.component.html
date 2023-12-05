@@ -1,0 +1,95 @@
+<div class="container p-3">
+
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{errorMessage}}
+  </div>
+  <div class="card">
+
+    <div class="card-header pb-5">
+      <div class="row">
+        <div class="col-12 pd-5">
+          <h1 class="pd-5 pt-2 text-center">Repository</h1>
+        </div>
+      </div>
+      <div class="row pt-5 pb-5">
+        <div class="text-center">
+          <form enctype="multipart/form-data">
+            <fieldset>
+              <input (change)="onFileSelected($event)" [multiple]="false" class="file-input" enctype="multipart/form-data" type="file">
+              <button (click)="editFile(this.selectedFileToUploadData)" class="btn btn-primary">Edit</button>
+              <button (click)="uploadFile()" class="btn btn-primary">Upload</button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <div>
+        <label class="pb-3">Search</label>
+        </div>
+        <div>
+        <input (keyup)="textInput($event)" class="form-control"  type="email">
+        </div>
+      </div>
+
+    </div>
+
+
+  <div *ngIf="!isRepositoryEmpty()" class="card-body">
+    <div class="table table-stripped text-center">
+      <thead>
+        <tr>
+          <th class="col-1" scope="col"></th>
+          <th class="col-1" scope="col">#</th>
+          <th class="col-3" scope="col">Title</th>
+          <th class="col-2" scope="col">Upload Date</th>
+          <th class="col-1" scope="col">File Size</th>
+          <th class="col-2" scope="col">Description</th>
+          <th class="col-1" scope="col"></th>
+          <th class="col-1" scope="col"></th>
+          <th class="col-1" scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor = "let item of fileList; index as ind">
+          <th scope="row">
+            <div class="imageContainer  pe-3 ">
+              <img
+                alt="Database Logo"
+                src="{{fileCover(item.fileType)}}"
+                width="40"
+              />
+            </div>
+          </th>
+          <th scope="row">{{ind + 1}}</th>
+          <th scope="row">{{item.fileShowName}}</th>
+          <th scope="row">{{item.sendDate | date: "medium"}}</th>
+          <th scope="row">{{bytesToKbOrMb(item.fileSize!)}}</th>
+          <th scope="row">{{item.description}}</th>
+          <th scope="row">
+            <button (click)="editFile(item)"  class="btn btn-primary">Edit</button>
+          </th>
+          <th scope="row">
+            <button (click)="downloadFileRequest(item)" class="btn btn-primary" >Download</button>
+          </th>
+          <th scope="row">
+            <button (click)="deleteFileRequest(item)" class="btn btn-danger">Delete</button>
+          </th>
+
+        </tr>
+      </tbody>
+    </div>
+  </div>
+
+    <div *ngIf="isRepositoryEmpty()" class="card-body">
+      <div class="col-md-12 mt-5 text-center">
+          <span class="display-5">
+              Repository Is Empty
+          </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-file-delete (confirmed)="deleteFile()"></app-file-delete>
+<app-file-edit (save)="saveEditedFile()"></app-file-edit>

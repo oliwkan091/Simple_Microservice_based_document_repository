@@ -1,0 +1,15 @@
+.card{
+  width:100%;
+  max-width: 200%;
+  min-width: 350px;
+  align-items: center;
+  text-align: start;
+  align-content: start;
+}
+
+
+.card-element{
+  text-align: center;
+  width: 200px;
+  background-color: powderblue;
+}

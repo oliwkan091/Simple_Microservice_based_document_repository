@@ -1,0 +1,253 @@
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {AuthenticationService} from "../../services/authentication.service";
+import {ManageFilesService} from "../../services/manage-files.service";
+import {DocumentFile} from "../../../model/DocumentFile";
+import {FileDeleteComponent} from "../../components/file-delete/file-delete.component";
+import {FileDownloadService} from "../../services/file-download.service";
+import {HttpEvent, HttpEventType} from "@angular/common/http";
+import {saveAs} from "file-saver";
+import {FileUploadService} from "../../services/file-upload.service";
+import {FileEditComponent} from "../../components/file-edit/file-edit.component";
+
+@Component({
+  selector: 'app-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.css']
+})
+export class HomeComponent implements OnInit {
+
+  selectedFileToDelete :DocumentFile = new DocumentFile();
+  private selectedFileToUpload :File | undefined;
+  protected selectedFileToUploadData :DocumentFile = new DocumentFile();
+  private selectedFileToEdit: DocumentFile = new DocumentFile();
+  fileList: Array<DocumentFile> = [];
+  searchFound: boolean = false;
+
+  errorMessage: string = "";
+
+  @ViewChild(FileDeleteComponent)
+  deleteComponent: FileDeleteComponent | undefined;
+
+  @ViewChild(FileEditComponent)
+  fileEditComponent: FileEditComponent | undefined;
+
+
+  constructor(
+    private authenticationService: AuthenticationService,
+    private manageFilesService: ManageFilesService,
+    private fileDownloadService: FileDownloadService,
+    private fileUploadService: FileUploadService,
+    ) { }
+
+  ngOnInit(): void
+  {
+    this.getAllUserFiles()
+  }
+
+  getAllUserFiles()
+  {
+    this.fileList = [];
+    this.manageFilesService.getAllUserFiles().subscribe( data =>
+    {
+      this.fileList = data;
+    }, error =>
+    {
+      console.log("Error: " + error);
+      this.errorMessage = error;
+    })
+  }
+
+  textInput(event: Event) {
+
+    // @ts-ignore
+    const text = event.target.value;
+    if (text) {
+      this.manageFilesService.searchFile(text).subscribe(data => {
+          if (data.length > 0) {
+            this.fileList = data;
+            this.searchFound = true;
+          }else if (this.searchFound)
+          {
+            this.getAllUserFiles();
+            this.searchFound = false;
+          }
+        }, error => {
+          console.log(error);
+          this.errorMessage = error;
+        }
+      )
+    }else if (this.searchFound)
+    {
+      this.getAllUserFiles();
+      this.searchFound = false;
+    }
+  }
+
+
+
+  onFileSelected(event: Event) {
+    this.errorMessage = "";
+    // @ts-ignore
+    this.selectedFileToUpload = event.target.files[0];
+    this.selectedFileToUploadData = new DocumentFile()
+    var re = /[.][\D\d]+/;
+    this.selectedFileToUploadData.fileShowName = this.selectedFileToUpload?.name.replace(re, "");
+    this.selectedFileToUploadData.description = "";
+  }
+
+  uploadFile()
+  {
+    if (this.selectedFileToUpload)
+    {
+      const formData = new FormData();
+      formData.append('files', this.selectedFileToUpload);
+
+      this.fileUploadService.upload(formData).subscribe(data =>
+        {
+          const updatedFile: DocumentFile = new DocumentFile();
+          updatedFile.construct(data.body);
+          updatedFile.fileShowName = this.selectedFileToUploadData.fileShowName;
+          updatedFile.description = this.selectedFileToUploadData.description;
+          this.manageFilesService.saveEditedFile(updatedFile).subscribe( data =>
+          {
+            this.fileList.push(updatedFile);
+          }, error =>
+          {
+            console.log('error: ');
+            console.log(error);
+            this.errorMessage = error;
+          })
+
+        }, error =>
+        {
+          console.log('error: ');
+          console.log(error);
+          this.errorMessage = error;
+        }
+
+      );
+    }else
+    {
+      console.log('Select a file to be send');
+      this.errorMessage = "Select a file to be send";
+    }
+  }
+
+
+  isRepositoryEmpty()
+  {
+    if(this.fileList.length === 0)
+    {
+      return true;
+    }else
+    {
+      return false;
+    }
+  }
+
+<<<<<<< HEAD
+
+=======
+                              //Dzięki teemu w html nie musi być "!" na końcu
+>>>>>>> develop
+  fileCover(fileType: string = ""): string
+  {
+    if(fileType.search("image") != -1) {
+      return "/assets/images/img.png";
+    }
+    else if(fileType.search("pdf") != -1)
+    {
+      return "/assets/images/Pdf.png";
+    }
+    else if(fileType.search("text") != -1)
+    {
+      return "/assets/images/text.png";
+    }
+    else
+    {
+      return "/assets/images/database.png";
+    }
+
+  }
+
+  deleteFileRequest(file: DocumentFile)
+  {
+    this.selectedFileToDelete = file;
+    this.deleteComponent?.showDeleteModel();
+  }
+
+  deleteFile()
+  {
+    let index = this.fileList.findIndex(item => item.id === this.selectedFileToDelete.id)
+
+    this.manageFilesService.deleteFileById(this.selectedFileToDelete).subscribe(data =>
+    {
+      this.fileList.splice(index, 1);
+    }, error =>
+    {
+      this.errorMessage = error;
+      console.log("error: " + error);
+    });
+  }
+
+  downloadFileRequest(file: DocumentFile):void
+  {
+    this.fileDownloadService.downloadFile(file).subscribe( event =>
+      {
+        console.log(event);
+        this.reportProgress(event, file);
+      }, error =>
+      {
+        console.log(error);
+      }
+    );
+  }
+
+
+  private reportProgress(httpEvent: HttpEvent<string[] | Blob>, file: DocumentFile): void
+  {
+      if (httpEvent.type == HttpEventType.Response)
+      {
+      // @ts-ignore
+      saveAs(new File([httpEvent.body!], file.filename, {type: file.fileType + ";charset=utf-8"}));
+      }
+  }
+
+  bytesToKbOrMb(sizeInBytes: number): string
+  {
+    sizeInBytes = sizeInBytes / 1024;
+    if(sizeInBytes > 999)
+    {
+      sizeInBytes = sizeInBytes / 1024;
+      return sizeInBytes.toFixed(2).toString() + "MB"
+    }else
+    {
+      return sizeInBytes.toFixed(2).toString() + "KB"
+    }
+  }
+
+  editFile(file: DocumentFile)
+  {
+    if(file.fileShowName?.length != 0) {
+      this.selectedFileToEdit = file;
+      this.fileEditComponent?.showEditModalModel(this.selectedFileToEdit);
+    }else
+    {
+      this.errorMessage = "Select File to edit"
+    }
+  }
+
+  saveEditedFile()
+  {
+    this.manageFilesService.saveEditedFile(this.selectedFileToEdit).subscribe(data =>
+    {
+      let index = this.fileList.findIndex(item => item.fileId === this.selectedFileToEdit.fileId)
+      this.fileList[index] = data;
+
+    }, error =>
+    {
+      this.errorMessage = "Error occurred";
+      console.log(error);
+    })
+  }
+}
